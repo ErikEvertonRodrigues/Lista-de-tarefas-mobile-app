@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button, Alert, FlatList } from 'react-native';
 
 export default function App() {
 
-  const [inputText, SetInputText] = useState('Texto padrão');
+  const [inputText, onChangeInputText] = useState('');
+  const [tasks, setTasks] = useState<Task[]>([])
 
   type Task = {
     id: number
@@ -12,20 +13,23 @@ export default function App() {
     done: boolean
   }
 
-  let tasks: Task[] = [];
-
-  function createTask(id: number, taskText: string) {
-    const newTask: Task = {
+  function createTask(id: number, taskText: string): Task {
+    return {
       id: id,
       text: taskText,
       done: false,
     }
-
-    return newTask;
   }
 
   function addTask() {
-    
+    if (inputText.trim() === '') return;
+
+    setTasks(prevTasks => {
+      const id = prevTasks.length === 0 ? 0 : prevTasks[prevTasks.length - 1].id + 1; 
+      return [...prevTasks, createTask(id, inputText)];
+    });
+
+    onChangeInputText('');
   }
 
   return (
@@ -35,7 +39,9 @@ export default function App() {
           <Text style={styles.inputText}>Digite o nome da tarefa: </Text>
           <TextInput
             style={styles.input}
-
+            onChangeText={onChangeInputText}
+            placeholder='Digite a tarefa'
+            value={inputText}
           />
         </View>
           <Button
@@ -45,6 +51,18 @@ export default function App() {
       </View>
       <View>
         <Text style={styles.tasksTitle}>Tarefas adicionadas</Text>
+        {
+          tasks.map(item => (
+            <View key={item.id}>
+              <Text>
+                Tarefa: {item.text}
+              </Text>
+              <Text>
+                Concluida: {item.done ? 'Concluida' : 'Pendente'}
+              </Text>
+            </View>
+          ))
+        }
       </View>
       <StatusBar style="auto" />
     </View>
