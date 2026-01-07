@@ -39,6 +39,12 @@ export default function App() {
     ));
   }
 
+  function removeTask(id: number) {
+    setTasks(prevTasks => prevTasks.filter(task => 
+      task.id !== id  
+    ))
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -71,12 +77,18 @@ export default function App() {
                 <Button 
                   title='concluir'
                   color='#0f0'
-                  onPress={() => toggleTaskDone(item.id, true)}/>
+                  onPress={() => toggleTaskDone(item.id, true)}
+                />
                 <Button
                   title='Tornar pendente'
-                  color='#f00'
+                  color='#e0ff2eff'
                   onPress={() => toggleTaskDone(item.id, false)}
-                  />
+                />
+                <Button 
+                  title='remover tarefa'
+                  color='#f00'
+                  onPress={() => removeTask(item.id)}
+                />
               </View>
             ))
           }
