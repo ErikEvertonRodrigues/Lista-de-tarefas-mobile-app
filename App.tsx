@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, Button, Alert, FlatList } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button, Alert, ScrollView } from 'react-native';
 
 export default function App() {
 
   const [inputText, onChangeInputText] = useState('');
-  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasks, setTasks] = useState<Task[]>([]);
+  
 
   type Task = {
     id: number
@@ -32,9 +33,15 @@ export default function App() {
     onChangeInputText('');
   }
 
+  function toggleTaskDone(id: number, change: boolean) {
+    setTasks(prevTasks => prevTasks.map(task => 
+      task.id === id ? { ...task, done: change } : task
+    ));
+  }
+
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.topContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.inputText}>Digite o nome da tarefa: </Text>
           <TextInput
@@ -48,21 +55,32 @@ export default function App() {
             title='Adicionar tarefa'
             onPress={() => addTask()}
           />
-      </View>
+        </View>
       <View>
         <Text style={styles.tasksTitle}>Tarefas adicionadas</Text>
-        {
-          tasks.map(item => (
-            <View key={item.id}>
-              <Text>
-                Tarefa: {item.text}
-              </Text>
-              <Text>
-                Concluida: {item.done ? 'Concluida' : 'Pendente'}
-              </Text>
-            </View>
-          ))
-        }
+        <ScrollView style={{flex: 1, paddingTop:20}}>
+          {
+            tasks.map(item => (
+              <View style={styles.taskContainer} key={item.id}>
+                <Text style={styles.taskText}>
+                  Tarefa: {item.text}
+                </Text>
+                <Text style={styles.taskText}>
+                  Concluida: {item.done ? 'Concluida' : 'Pendente'}
+                </Text>
+                <Button 
+                  title='concluir'
+                  color='#0f0'
+                  onPress={() => toggleTaskDone(item.id, true)}/>
+                <Button
+                  title='Tornar pendente'
+                  color='#f00'
+                  onPress={() => toggleTaskDone(item.id, false)}
+                  />
+              </View>
+            ))
+          }
+        </ScrollView>
       </View>
       <StatusBar style="auto" />
     </View>
@@ -74,7 +92,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-start',
+    marginTop: 80,
+  },
+
+  topContainer: {
+    marginBottom: 30,
   },
 
   input: {
@@ -99,4 +122,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
   },
+
+  taskContainer: {
+    backgroundColor: '#47b2ffff',
+    borderRadius: 5,
+    marginVertical: 10,
+    padding: 20,
+    flex: 1,
+    height: 200,
+    justifyContent: 'space-around',
+  },
+
+  taskText: {
+    color: '#fff',
+  }
 });
