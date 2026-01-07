@@ -58,7 +58,7 @@ export default function App() {
         </View>
       <View>
         <Text style={styles.tasksTitle}>Tarefas adicionadas</Text>
-        <ScrollView style={{flex: 1, paddingTop:20}}>
+        <ScrollView style={{flex: 1, paddingTop:20, paddingBottom: 60}}>
           {
             tasks.map(item => (
               <View style={styles.taskContainer} key={item.id}>
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginTop: 80,
+    paddingBottom: 120,
   },
 
   topContainer: {
